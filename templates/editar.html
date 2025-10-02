@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Tarea - Gestor de Tareas{% endblock %}
+
+{% block content %}
+<header>
+    <h1>✏️ Editar Tarea</h1>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Volver al Inicio</a>
+</header>
+
+<div class="card">
+    <form action="{{ url_for('editar') }}" method="POST">
+        <input type="hidden" name="id" value="{{ tarea.id }}">
+        
+        <div class="form-group">
+            <label for="titulo">Título *:</label>
+            <input type="text" name="titulo" value="{{ tarea.titulo }}" required maxlength="255">
+        </div>
+        
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea name="descripcion" rows="4" maxlength="1000">{{ tarea.descripcion or '' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="estado">Estado:</label>
+            <select name="estado">
+                <option value="pendiente" {% if tarea.estado == 'pendiente' %}selected{% endif %}>⏳ Pendiente</option>
+                <option value="en_progreso" {% if tarea.estado == 'en_progreso' %}selected{% endif %}>🚀 En Progreso</option>
+                <option value="completada" {% if tarea.estado == 'completada' %}selected{% endif %}>✅ Completada</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="fecha_vencimiento">📅 Fecha de vencimiento:</label>
+            <input type="date" name="fecha_vencimiento" value="{{ tarea.fecha_vencimiento_input }}">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">❌ Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

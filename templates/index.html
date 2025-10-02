@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header>
+    <h1>🐍 Gestor de Tareas con Python</h1>
+    <p>Flask + MySQL - Sistema completo de gestión</p>
+</header>
+
+<div class="card">
+    <h2>➕ Agregar Nueva Tarea</h2>
+    <form action="{{ url_for('agregar') }}" method="POST" class="task-form">
+        <div class="form-group">
+            <input type="text" name="titulo" placeholder="Título de la tarea *" required maxlength="255">
+        </div>
+        <div class="form-group">
+            <textarea name="descripcion" placeholder="Descripción de la tarea (opcional)" rows="3" maxlength="1000"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="fecha_vencimiento">📅 Fecha de vencimiento:</label>
+            <input type="date" name="fecha_vencimiento">
+        </div>
+        <button type="submit" class="btn btn-primary">➕ Agregar Tarea</button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>📋 Lista de Tareas ({{ tareas|length }})</h2>
+        {% if tareas %}
+        <div class="filters">
+            <span class="filter-label">Filtrar:</span>
+            <a href="{{ url_for('index') }}" class="filter-btn {% if not request.args.get('estado') %}active{% endif %}">Todas</a>
+            <a href="?estado=pendiente" class="filter-btn {% if request.args.get('estado') == 'pendiente' %}active{% endif %}">⏳ Pendientes</a>
+            <a href="?estado=en_progreso" class="filter-btn {% if request.args.get('estado') == 'en_progreso' %}active{% endif %}">🚀 En Progreso</a>
+            <a href="?estado=completada" class="filter-btn {% if request.args.get('estado') == 'completada' %}active{% endif %}">✅ Completadas</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if not tareas %}
+        <div class="no-tasks">
+            <div class="no-tasks-icon">📝</div>
+            <h3>No hay tareas registradas</h3>
+            <p>¡Agrega tu primera tarea usando el formulario de arriba!</p>
+        </div>
+    {% else %}
+        <div class="tasks-grid">
+            {% for tarea in tareas %}
+                <div class="task-card {{ tarea.estado }}">
+                    <div class="task-header">
+                        <h3>{{ tarea.titulo }}</h3>
+                        <span class="status-badge {{ tarea.estado }}">
+                            {% if tarea.estado == 'pendiente' %}⏳ Pendiente
+                            {% elif tarea.estado == 'en_progreso' %}🚀 En Progreso
+                            {% else %}✅ Completada{% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="task-body">
+                        {% if tarea.descripcion %}
+                            <p class="task-description">{{ tarea.descripcion }}</p>
+                        {% endif %}
+                        
+                        <div class="task-meta">
+                            <div class="meta-item">
+                                <small>📅 Creada: {{ tarea.fecha_creacion }}</small>
+                            </div>
+                            {% if tarea.fecha_vencimiento %}
+                            <div class="meta-item">
+                                <small>⏰ Vence: {{ tarea.fecha_vencimiento }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="task-actions">
+                        <a href="{{ url_for('editar_form', id=tarea.id) }}" class="btn btn-edit">✏️ Editar</a>
+                        
+                        <div class="status-actions">
+                            {% if tarea.estado != 'pendiente' %}
+                                <a href="{{ url_for('cambiar_estado', id=tarea.id, estado='pendiente') }}" class="btn btn-status">⏳ Pendiente</a>
+                            {% endif %}
+                            {% if tarea.estado != 'en_progreso' %}
+                                <a href="{{ url_for('cambiar_estado', id=tarea.id, estado='en_progreso') }}" class="btn btn-status">🚀 En Progreso</a>
+                            {% endif %}
+                            {% if tarea.estado != 'completada' %}
+                                <a href="{{ url_for('cambiar_estado', id=tarea.id, estado='completada') }}" class="btn btn-status">✅ Completar</a>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{{ url_for('eliminar', id=tarea.id) }}" class="btn btn-delete" 
+                           onclick="return confirm('¿Estás seguro de eliminar esta tarea?');">🗑️ Eliminar</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
