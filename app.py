@@ -12,7 +12,7 @@ def get_db_connection():
         conn = mysql.connector.connect(
             host='172.31.23.209',
             user='root',
-            password='',
+            password='admin123',
             database='gestion_tareas',
             charset='utf8mb4',
             collation='utf8mb4_unicode_ci'
