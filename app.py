@@ -10,7 +10,7 @@ app.secret_key = 'tu_clave_secreta_aqui'
 def get_db_connection():
     try:
         conn = mysql.connector.connect(
-            host='172.31.23.209',
+            host='3.95.201.54',
             user='root',
             password='admin123',
             database='gestion_tareas',
