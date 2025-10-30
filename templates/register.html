@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Registro - Tareas PRO{% endblock %}
+{% block content %}
+
+<div class="auth-wrapper container">
+  <div class="card auth-card border-0 shadow-soft fade-in overflow-hidden">
+    <div class="row g-0">
+      <!-- Panel visual -->
+      <div class="d-none d-md-block col-md-5 position-relative" style="background:
+          radial-gradient(1200px 600px at -10% -10%, rgba(91,124,250,.25), transparent 60%),
+          radial-gradient(900px 500px at 120% 120%, rgba(45,212,191,.18), transparent 55%),
+          linear-gradient(120deg, #0ea5e9 0%, #5b7cfa 45%, #7b9bff 100%);
+        ">
+        <div class="h-100 w-100 p-4 d-flex flex-column justify-content-between text-white">
+          <div class="auth-header text-start">
+            <div class="brand shadow-soft" style="background: rgba(255,255,255,.15);">
+              <i class="bi bi-person-plus"></i>
+            </div>
+            <h2 class="fw-bold mb-1">Crea tu cuenta</h2>
+            <p class="mb-0 text-white-50">Colabora, comenta y gestiona tus tareas.</p>
+          </div>
+          <div class="mt-auto small text-white-50">
+            <i class="bi bi-shield-check me-1"></i> Contraseñas cifradas · Auditoría de cambios
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="col-12 col-md-7">
+        <div class="p-4 p-lg-5">
+          <div class="mb-3 d-md-none text-center">
+            <div class="auth-header">
+              <div class="brand"><i class="bi bi-person-plus"></i></div>
+              <h2 class="fw-bold mb-1">Tareas PRO</h2>
+              <p class="text-muted-2 mb-0">Regístrate para comenzar</p>
+            </div>
+          </div>
+
+          <h1 class="h4 fw-bold mb-3">Crear cuenta</h1>
+          <p class="text-muted mb-4">Completa los datos para registrarte.</p>
+
+          <form method="post" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input name="nombre" class="form-control" required maxlength="255" placeholder="Tu nombre">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input name="email" type="email" class="form-control" required placeholder="tucorreo@empresa.com">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input id="password" name="password" type="password" class="form-control" required placeholder="Mín. 8 caracteres">
+                <button type="button" class="btn btn-outline-secondary" id="togglePwd" aria-label="Mostrar/Ocultar contraseña">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              <div class="form-text">
+                Debe tener al menos 8 caracteres y combinar letras y números.
+              </div>
+              <div class="progress mt-2" style="height: 6px;">
+                <div id="pwdStrength" class="progress-bar" role="progressbar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary w-100 py-2">Crear cuenta</button>
+
+            <div class="text-center mt-4">
+              <span class="text-muted">¿Ya tienes cuenta?</span>
+              <a href="{{ url_for('login') }}" class="ms-1">Ingresar</a>
+            </div>
+          </form>
+
+          <div class="footer small text-center text-muted-2 mt-4">
+            © {{ now.year }} Tareas PRO
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const pwd = document.getElementById('password');
+  const bar = document.getElementById('pwdStrength');
+  const toggle = document.getElementById('togglePwd');
+
+  function score(s){
+    if(!s) return 0;
+    let pts = 0;
+    if(s.length >= 8) pts += 30;
+    if(/[A-Z]/.test(s)) pts += 20;
+    if(/[a-z]/.test(s)) pts += 20;
+    if(/\d/.test(s)) pts += 20;
+    if(/[^A-Za-z0-9]/.test(s)) pts += 10;
+    return Math.min(100, pts);
+  }
+  function paint(val){
+    bar.style.width = val + '%';
+    bar.classList.remove('bg-danger','bg-warning','bg-success');
+    if(val < 40) bar.classList.add('bg-danger');
+    else if(val < 70) bar.classList.add('bg-warning');
+    else bar.classList.add('bg-success');
+  }
+  if(pwd && bar){
+    pwd.addEventListener('input', e => paint(score(e.target.value)));
+  }
+  if(toggle && pwd){
+    toggle.addEventListener('click', function(){
+      const isPwd = pwd.getAttribute('type') === 'password';
+      pwd.setAttribute('type', isPwd ? 'text' : 'password');
+      this.innerHTML = isPwd ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+    });
+  }
+})();
+</script>
+{% endblock %}

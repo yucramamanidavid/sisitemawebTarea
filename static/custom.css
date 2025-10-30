@@ -1,0 +1,393 @@
+/* ==========================================================================
+   Tareas PRO – Custom CSS (Bootstrap 5.3)
+   Autor: Tú 😎
+   Descripción: Estilos sobre Bootstrap para un look moderno, limpio y accesible.
+   ========================================================================== */
+
+/* ------------------------------
+   Variables de tema
+   ------------------------------ */
+:root{
+  --tp-primary: #5b7cfa;
+  --tp-primary-600: #4a6af0;
+  --tp-bg: #f5f7fb;
+  --tp-surface: #ffffff;
+  --tp-text: #1d2230;
+  --tp-muted: #6b7280;
+  --tp-border: #e5e7eb;
+  --tp-success: #22c55e;
+  --tp-warning: #f59e0b;
+  --tp-danger:  #ef4444;
+  --tp-info:    #06b6d4;
+  --tp-shadow:  0 8px 24px rgba(18, 23, 34, .06);
+  --tp-radius:  12px;
+}
+
+@media (prefers-color-scheme: black){
+  :root{
+    --tp-primary: #7b9bff;
+    --tp-primary-600: #5b7cfa;
+    --tp-bg: #0e1320;
+    --tp-surface: #131a2b;
+    --tp-text: #e5e7eb;
+    --tp-muted: #9aa3b2;
+    --tp-border: #252c3c;
+    --tp-success: #31d07b;
+    --tp-warning: #ffb347;
+    --tp-danger:  #ff6b6b;
+    --tp-info:    #2dd4bf;
+    --tp-shadow:  0 10px 28px rgba(0,0,0,.35);
+  }
+}
+
+/* ------------------------------
+   Reseteo fino + tipografía
+   ------------------------------ */
+html,body{ height:100%; }
+body{
+  background: var(--tp-bg);
+  color: var(--tp-text);
+  font-feature-settings: "cv11","ss01","tnum";
+}
+a{
+  color: var(--tp-primary);
+  text-decoration: none;
+}
+a:hover{
+  color: var(--tp-primary-600);
+  text-decoration: underline;
+}
+
+/* ------------------------------
+   Contenedores y layout
+   ------------------------------ */
+.container, .container-fluid{
+  padding-top: 18px;
+  padding-bottom: 24px;
+}
+
+/* ------------------------------
+   Navbar (opcional)
+   ------------------------------ */
+.navbar.tp-navbar{
+  background: var(--tp-surface) !important;
+  box-shadow: var(--tp-shadow);
+  border-bottom: 1px solid var(--tp-border);
+}
+.navbar .nav-link{ color: var(--tp-muted); }
+.navbar .nav-link.active, .navbar .nav-link:hover{
+  color: var(--tp-primary);
+}
+
+/* ------------------------------
+   Cards
+   ------------------------------ */
+.card{
+  background: var(--tp-surface);
+  border: 1px solid var(--tp-border);
+  border-radius: var(--tp-radius);
+  box-shadow: var(--tp-shadow);
+}
+.card .card-header{
+  background: transparent;
+  border-bottom: 1px solid var(--tp-border);
+}
+
+/* Hover sutil para tarjetas clicables */
+.card.hoverable{
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.card.hoverable:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(18, 23, 34, .12);
+}
+
+/* ------------------------------
+   Dashboard KPIs
+   ------------------------------ */
+.kpi{ display:flex; align-items:center; gap:.75rem; }
+.kpi .kpi-icon{
+  width: 44px; height:44px; border-radius: 10px;
+  display:grid; place-items:center;
+  background: rgba(91,124,250,.12);
+  font-size: 1.25rem;
+}
+.kpi .kpi-icon.warning{ background: rgba(245,158,11,.12); color:#b45309; }
+.kpi .kpi-icon.info{    background: rgba(6,182,212,.12);  color:#0e7490; }
+.kpi .kpi-icon.success{ background: rgba(34,197,94,.12);  color:#166534; }
+.kpi .kpi-icon.danger{  background: rgba(239,68,68,.12);  color:#991b1b; }
+.kpi .kpi-value{ font-weight:700; font-size:1.25rem; }
+.kpi .kpi-label{ color: var(--tp-muted); font-size:.85rem; }
+
+/* ------------------------------
+   Badges de estado y prioridad
+   ------------------------------ */
+.badge{
+  border-radius: 10px;
+  padding: .45rem .6rem;
+  font-weight: 600;
+  letter-spacing:.2px;
+}
+.badge.text-bg-light{
+  background: transparent;
+  border: 1px solid var(--tp-border);
+  color: var(--tp-text);
+}
+.bg-warning-subtle{
+  background: rgba(245,158,11,.15) !important;
+}
+
+/* Etiquetas (tags) */
+.badge.tag{
+  background: transparent;
+  border:1px solid var(--tp-border);
+  color: var(--tp-muted);
+}
+.badge.tag:hover{
+  background: rgba(91,124,250,.08);
+  color: var(--tp-primary);
+  border-color: var(--tp-primary);
+}
+
+/* ------------------------------
+   Tarjeta de tarea (partial)
+   ------------------------------ */
+.task-card .card-title a{ color: inherit; }
+.task-card .card-title a:hover{
+  color: var(--tp-primary);
+  text-decoration: none;
+}
+.task-card .card-text{ color: var(--tp-muted); }
+
+/* Bordes de énfasis por estado y sombra por crítica */
+.task-card.is-pendiente{    border-left: 4px solid var(--tp-warning); }
+.task-card.is-en_progreso{  border-left: 4px solid var(--tp-info); }
+.task-card.is-completada{   border-left: 4px solid var(--tp-success); }
+.task-card.is-critica{
+  box-shadow: inset 0 0 0 1px rgba(239,68,68,.35), var(--tp-shadow);
+}
+
+.task-card .meta{
+  display:grid; gap: .25rem;
+  color: var(--tp-muted);
+}
+.task-card .actions .btn{ min-width: 110px; }
+
+/* ------------------------------
+   Formularios
+   ------------------------------ */
+.form-control, .form-select, .form-check-input{
+  border-radius: 10px;
+  border-color: var(--tp-border);
+  background: transparent;
+  color: var(--tp-text);
+}
+.form-control:focus, .form-select:focus{
+  border-color: var(--tp-primary);
+  box-shadow: 0 0 0 .2rem rgba(91,124,250,.15);
+}
+.input-group .btn{ border-radius: 10px; }
+
+/* Placeholders */
+::placeholder{ color: color-mix(in srgb, var(--tp-muted) 70%, transparent); }
+
+/* ------------------------------
+   Botones
+   ------------------------------ */
+.btn{
+  border-radius: 10px;
+  font-weight:600;
+}
+.btn-primary{
+  background: var(--tp-primary);
+  border-color: var(--tp-primary);
+}
+.btn-primary:hover{
+  background: var(--tp-primary-600);
+  border-color: var(--tp-primary-600);
+}
+.btn-outline-primary{
+  color: var(--tp-primary);
+  border-color: var(--tp-primary);
+}
+.btn-outline-primary:hover{
+  color: #fff; background: var(--tp-primary); border-color: var(--tp-primary);
+}
+.btn-danger{
+  background: var(--tp-danger);
+  border-color: var(--tp-danger);
+}
+.btn-success{
+  background: var(--tp-success);
+  border-color: var(--tp-success);
+}
+.btn-warning{
+  background: var(--tp-warning);
+  border-color: var(--tp-warning);
+  color:#1f2937;
+}
+.btn-info{
+  background: var(--tp-info);
+  border-color: var(--tp-info);
+}
+
+/* Botones tipo chip (acciones rápidas) */
+.btn-chip{
+  padding:.35rem .6rem; font-size:.85rem; border-radius: 999px;
+}
+
+/* ------------------------------
+   Alertas y flashes
+   ------------------------------ */
+.alert{
+  border-radius: 12px;
+  border:1px solid var(--tp-border);
+  box-shadow: var(--tp-shadow);
+}
+.alert .btn-close{ filter: invert(0); }
+@media (prefers-color-scheme: dark){
+  .alert .btn-close{ filter: invert(1); }
+}
+
+/* ------------------------------
+   Listas, comentarios y adjuntos
+   ------------------------------ */
+.list-group-item{
+  background: transparent;
+  border-color: var(--tp-border);
+  color: var(--tp-text);
+}
+.comment{
+  border-left:3px solid var(--tp-border);
+  padding-left: .75rem;
+}
+.comment .meta{ color: var(--tp-muted); font-size: .85rem; }
+
+/* Adjuntos */
+.attach-list .list-group-item{
+  display:flex; justify-content:space-between; align-items:center;
+}
+.attach-list .list-group-item:hover{
+  background: rgba(91,124,250,.06);
+}
+
+/* ------------------------------
+   Sidebar / Detalle
+   ------------------------------ */
+.sidebar-card .card-body{
+  display:flex; flex-direction:column; gap:.75rem;
+}
+.meta-line{
+  display:flex; gap:.5rem; align-items:center;
+  color: var(--tp-muted);
+}
+.meta-line i{ opacity:.9; }
+
+
+
+/* ------------------------------
+   Paginación
+   ------------------------------ */
+.pagination .page-link{
+  border-radius: 8px !important;
+  color: var(--tp-text);
+  border-color: var(--tp-border);
+  background: var(--tp-surface);
+}
+.pagination .page-link:hover{
+  color: var(--tp-primary);
+  border-color: var(--tp-primary);
+}
+
+/* ------------------------------
+   Utilidades
+   ------------------------------ */
+.text-muted-2{ color: var(--tp-muted) !important; }
+.border-soft{ border:1px solid var(--tp-border) !important; }
+.shadow-soft{ box-shadow: var(--tp-shadow) !important; }
+.rounded-12{ border-radius: var(--tp-radius) !important; }
+.max-w-700{ max-width:700px; }
+.line-clamp-2{
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.line-clamp-3{
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+}
+
+/* Tabla responsiva mejorada */
+.table{
+  --bs-table-bg: transparent;
+  color: var(--tp-text);
+  border-color: var(--tp-border);
+}
+.table thead th{
+  color: var(--tp-muted);
+  font-weight:700;
+}
+
+/* ------------------------------
+   Animaciones
+   ------------------------------ */
+.fade-in{
+  animation: fadeIn .25s ease both;
+}
+@keyframes fadeIn{
+  from{ opacity:0; transform: translateY(4px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+
+/* Skeleton loading */
+.skeleton{
+  background: linear-gradient(90deg, rgba(0,0,0,0), rgba(255,255,255,.25), rgba(0,0,0,0));
+  background-size: 200% 100%;
+  animation: shimmer 1s linear infinite;
+}
+@media (prefers-color-scheme: dark){
+  .skeleton{
+    background: linear-gradient(90deg, rgba(0,0,0,0), rgba(255,255,255,.08), rgba(0,0,0,0));
+  }
+}
+@keyframes shimmer{
+  0%{ background-position: 200% 0; }
+  100%{ background-position: -200% 0; }
+}
+
+/* ------------------------------
+   Responsive
+   ------------------------------ */
+@media (max-width: 991.98px){
+  .kpi .kpi-value{ font-size:1.15rem; }
+}
+@media (max-width: 767.98px){
+  .container, .container-fluid{ padding-top: 12px; padding-bottom: 16px; }
+  .auth-card{ max-width: 96%; }
+}
+
+/* ------------------------------
+   Inputs de fecha (dark)
+   ------------------------------ */
+@media (prefers-color-scheme: dark){
+  input[type="date"]::-webkit-calendar-picker-indicator{
+    filter: invert(1) opacity(.8);
+  }
+}
+
+/* ------------------------------
+   Footer opcional
+   ------------------------------ */
+.footer{
+  color: var(--tp-muted);
+  border-top: 1px solid var(--tp-border);
+  padding-top: .75rem;
+  margin-top: 1.25rem;
+}
+
+/* ------------------------------
+   Scrollbar sutil (WebKit)
+   ------------------------------ */
+*::-webkit-scrollbar{ width: 10px; height:10px; }
+*::-webkit-scrollbar-thumb{
+  background: color-mix(in srgb, var(--tp-muted) 35%, transparent);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track{ background: transparent; }

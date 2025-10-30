@@ -1,99 +1,204 @@
 {% extends "base.html" %}
-
+{% block title %}Inicio - Tareas PRO{% endblock %}
 {% block content %}
-<header>
-    <h1>🐍 Gestor de Tareas con Python</h1>
-    <p>Flask + MySQL - Sistema completo de gestión</p>
-</header>
 
-<div class="card">
-    <h2>➕ Agregar Nueva Tarea</h2>
-    <form action="{{ url_for('agregar') }}" method="POST" class="task-form">
-        <div class="form-group">
-            <input type="text" name="titulo" placeholder="Título de la tarea *" required maxlength="255">
+<!-- KPIs / Dashboard -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-soft hoverable">
+      <div class="card-body">
+        <div class="kpi">
+          <div class="kpi-icon warning"><i class="bi bi-hourglass-split"></i></div>
+          <div>
+            <div class="kpi-value">{{ stats.pend or 0 }}</div>
+            <div class="kpi-label">Pendientes</div>
+          </div>
         </div>
-        <div class="form-group">
-            <textarea name="descripcion" placeholder="Descripción de la tarea (opcional)" rows="3" maxlength="1000"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="fecha_vencimiento">📅 Fecha de vencimiento:</label>
-            <input type="date" name="fecha_vencimiento">
-        </div>
-        <button type="submit" class="btn btn-primary">➕ Agregar Tarea</button>
-    </form>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h2>📋 Lista de Tareas ({{ tareas|length }})</h2>
-        {% if tareas %}
-        <div class="filters">
-            <span class="filter-label">Filtrar:</span>
-            <a href="{{ url_for('index') }}" class="filter-btn {% if not request.args.get('estado') %}active{% endif %}">Todas</a>
-            <a href="?estado=pendiente" class="filter-btn {% if request.args.get('estado') == 'pendiente' %}active{% endif %}">⏳ Pendientes</a>
-            <a href="?estado=en_progreso" class="filter-btn {% if request.args.get('estado') == 'en_progreso' %}active{% endif %}">🚀 En Progreso</a>
-            <a href="?estado=completada" class="filter-btn {% if request.args.get('estado') == 'completada' %}active{% endif %}">✅ Completadas</a>
-        </div>
-        {% endif %}
+      </div>
     </div>
-    
-    {% if not tareas %}
-        <div class="no-tasks">
-            <div class="no-tasks-icon">📝</div>
-            <h3>No hay tareas registradas</h3>
-            <p>¡Agrega tu primera tarea usando el formulario de arriba!</p>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-soft hoverable">
+      <div class="card-body">
+        <div class="kpi">
+          <div class="kpi-icon info"><i class="bi bi-rocket-takeoff"></i></div>
+          <div>
+            <div class="kpi-value">{{ stats.prog or 0 }}</div>
+            <div class="kpi-label">En progreso</div>
+          </div>
         </div>
-    {% else %}
-        <div class="tasks-grid">
-            {% for tarea in tareas %}
-                <div class="task-card {{ tarea.estado }}">
-                    <div class="task-header">
-                        <h3>{{ tarea.titulo }}</h3>
-                        <span class="status-badge {{ tarea.estado }}">
-                            {% if tarea.estado == 'pendiente' %}⏳ Pendiente
-                            {% elif tarea.estado == 'en_progreso' %}🚀 En Progreso
-                            {% else %}✅ Completada{% endif %}
-                        </span>
-                    </div>
-                    
-                    <div class="task-body">
-                        {% if tarea.descripcion %}
-                            <p class="task-description">{{ tarea.descripcion }}</p>
-                        {% endif %}
-                        
-                        <div class="task-meta">
-                            <div class="meta-item">
-                                <small>📅 Creada: {{ tarea.fecha_creacion }}</small>
-                            </div>
-                            {% if tarea.fecha_vencimiento %}
-                            <div class="meta-item">
-                                <small>⏰ Vence: {{ tarea.fecha_vencimiento }}</small>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="task-actions">
-                        <a href="{{ url_for('editar_form', id=tarea.id) }}" class="btn btn-edit">✏️ Editar</a>
-                        
-                        <div class="status-actions">
-                            {% if tarea.estado != 'pendiente' %}
-                                <a href="{{ url_for('cambiar_estado', id=tarea.id, estado='pendiente') }}" class="btn btn-status">⏳ Pendiente</a>
-                            {% endif %}
-                            {% if tarea.estado != 'en_progreso' %}
-                                <a href="{{ url_for('cambiar_estado', id=tarea.id, estado='en_progreso') }}" class="btn btn-status">🚀 En Progreso</a>
-                            {% endif %}
-                            {% if tarea.estado != 'completada' %}
-                                <a href="{{ url_for('cambiar_estado', id=tarea.id, estado='completada') }}" class="btn btn-status">✅ Completar</a>
-                            {% endif %}
-                        </div>
-                        
-                        <a href="{{ url_for('eliminar', id=tarea.id) }}" class="btn btn-delete" 
-                           onclick="return confirm('¿Estás seguro de eliminar esta tarea?');">🗑️ Eliminar</a>
-                    </div>
-                </div>
-            {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-soft hoverable">
+      <div class="card-body">
+        <div class="kpi">
+          <div class="kpi-icon success"><i class="bi bi-check2-circle"></i></div>
+          <div>
+            <div class="kpi-value">{{ stats.comp or 0 }}</div>
+            <div class="kpi-label">Completadas</div>
+          </div>
         </div>
-    {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-soft hoverable">
+      <div class="card-body">
+        <div class="kpi">
+          <div class="kpi-icon danger"><i class="bi bi-exclamation-triangle"></i></div>
+          <div>
+            <div class="kpi-value">{{ stats.crit or 0 }}</div>
+            <div class="kpi-label">Críticas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Alta rápida -->
+<div class="card border-0 shadow-soft mb-4 hoverable">
+  <div class="card-body">
+    <form class="row g-2 align-items-end" method="post" action="{{ url_for('tarea_nueva') }}">
+      <div class="col-12 col-md-4">
+        <label class="form-label">Título *</label>
+        <input name="titulo" class="form-control" required maxlength="255" placeholder="Ej. Preparar informe semanal">
+      </div>
+      <div class="col-12 col-md-3">
+        <label class="form-label">Vencimiento</label>
+        <input type="date" name="fecha_vencimiento" class="form-control">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label">Prioridad</label>
+        <select name="prioridad" class="form-select">
+          <option value="baja">Baja</option>
+          <option value="media" selected>Media</option>
+          <option value="alta">Alta</option>
+          <option value="critica">Crítica</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label">Asignar</label>
+        <select name="asignada_a" class="form-select">
+          <option value="">—</option>
+          {% for u in usuarios %}
+            <option value="{{ u.id }}">{{ u.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12 col-md-1 d-grid">
+        <button class="btn btn-primary"><i class="bi bi-plus-lg"></i></button>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Descripción</label>
+        <textarea name="descripcion" rows="2" class="form-control" maxlength="1000" placeholder="Detalles breves…"></textarea>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Filtros -->
+<form class="card border-0 shadow-soft mb-3" method="get">
+  <div class="card-body row g-2">
+    <div class="col-12 col-md-3">
+      <input class="form-control" name="q" placeholder="Buscar por título o descripción…" value="{{ filtros.q }}">
+    </div>
+    <div class="col-6 col-md-2">
+      <select name="estado" class="form-select">
+        <option value="">Todos</option>
+        <option value="pendiente" {{ 'selected' if filtros.estado=='pendiente' }}>Pendiente</option>
+        <option value="en_progreso" {{ 'selected' if filtros.estado=='en_progreso' }}>En progreso</option>
+        <option value="completada" {{ 'selected' if filtros.estado=='completada' }}>Completada</option>
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <select name="prioridad" class="form-select">
+        <option value="">Prioridad</option>
+        {% for p in ['baja','media','alta','critica'] %}
+          <option value="{{ p }}" {{ 'selected' if filtros.prioridad==p }}>{{ p|capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-3">
+      <select name="asignada" class="form-select">
+        <option value="">Asignada a</option>
+        {% for u in usuarios %}
+          <option value="{{ u.id }}" {{ 'selected' if filtros.asignada and filtros.asignada|int==u.id }}>{{ u.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-2 d-grid">
+      <button class="btn btn-outline-primary"><i class="bi bi-search"></i> Filtrar</button>
+    </div>
+
+    {% if filtros.q or filtros.estado or filtros.prioridad or filtros.asignada %}
+      <div class="col-12 mt-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="small text-muted-2">Filtros activos:</span>
+          {% if filtros.q %}<span class="badge text-bg-light border">Búsqueda: “{{ filtros.q }}”</span>{% endif %}
+          {% if filtros.estado %}<span class="badge text-bg-light border">Estado: {{ filtros.estado.replace('_',' ') }}</span>{% endif %}
+          {% if filtros.prioridad %}<span class="badge text-bg-light border">Prioridad: {{ filtros.prioridad|capitalize }}</span>{% endif %}
+          {% if filtros.asignada %}
+            {% for u in usuarios %}
+              {% if u.id == filtros.asignada|int %}
+                <span class="badge text-bg-light border">Asignada: {{ u.nombre }}</span>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          <a class="btn btn-sm btn-link" href="{{ url_for('index') }}">Limpiar filtros</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</form>
+
+<!-- Resumen y paginación superior -->
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <div class="small text-muted-2">
+    Total: <strong>{{ total }}</strong> resultados · Página <strong>{{ page }}</strong>
+  </div>
+  {% set pages = (total // per_page) + (1 if (total % per_page) else 0) %}
+  {% if pages > 1 %}
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        {% set query = request.args.to_dict() %}
+        {% set prev = page-1 %}
+        {% set next = page+1 %}
+        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+          {% set _ = query.update({'page': 1}) %}
+          <a class="page-link" href="?{{ query|urlencode }}">Primera</a>
+        </li>
+        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+          {% set _ = query.update({'page': prev}) %}
+          <a class="page-link" href="?{{ query|urlencode }}">&laquo;</a>
+        </li>
+        <li class="page-item disabled"><span class="page-link">{{ page }} / {{ pages }}</span></li>
+        <li class="page-item {% if page >= pages %}disabled{% endif %}">
+          {% set _ = query.update({'page': next}) %}
+          <a class="page-link" href="?{{ query|urlencode }}">&raquo;</a>
+        </li>
+        <li class="page-item {% if page >= pages %}disabled{% endif %}">
+          {% set _ = query.update({'page': pages}) %}
+          <a class="page-link" href="?{{ query|urlencode }}">Última</a>
+        </li>
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+
+<!-- Cards de tareas -->
+<div class="row g-3">
+  {% for t in tareas %}
+    <div class="col-12 col-md-6 col-lg-4">
+      {% include "_task_card.html" %}
+    </div>
+  {% else %}
+    <div class="col-12">
+      <div class="alert alert-info border-soft">Sin tareas que mostrar.</div>
+    </div>
+  {% endfor %}
+</div>
+
 {% endblock %}

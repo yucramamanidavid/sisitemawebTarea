@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}Detalle de tarea - {{ tarea.titulo }}{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h3 class="mb-0">📝 {{ tarea.titulo }}</h3>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+    <a class="btn btn-outline-danger"
+       href="{{ url_for('tarea_eliminar', id=tarea.id) }}"
+       onclick="return confirm('¿Eliminar la tarea?');">
+      <i class="bi bi-trash"></i>
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Columna principal -->
+  <div class="col-12 col-lg-8">
+    <!-- Datos principales -->
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+          {% set state_class = {
+            'pendiente':'warning',
+            'en_progreso':'info',
+            'completada':'success'
+          }[tarea.estado] if tarea.estado in ['pendiente','en_progreso','completada'] else 'secondary' %}
+          <span class="badge bg-{{ state_class }} text-dark">{{ tarea.estado|replace('_',' ')|capitalize }}</span>
+
+          {% set pr_class = {
+            'baja':'secondary',
+            'media':'primary',
+            'alta':'danger',
+            'critica':'dark'
+          }[tarea.prioridad] if tarea.prioridad in ['baja','media','alta','critica'] else 'secondary' %}
+          <span class="badge bg-{{ pr_class }}">{{ tarea.prioridad|capitalize }}</span>
+
+          {% if tarea.fecha_vencimiento %}
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-calendar-event"></i> Vence: {{ tarea.fecha_vencimiento }}
+            </span>
+          {% endif %}
+        </div>
+
+        {% if tarea.descripcion %}
+          <p class="mb-0" style="white-space: pre-wrap;">{{ tarea.descripcion }}</p>
+        {% else %}
+          <p class="text-muted mb-0">Sin descripción.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Comentarios -->
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-header bg-white">
+        <strong>💬 Comentarios ({{ comentarios|length }})</strong>
+      </div>
+      <div class="card-body">
+        <form class="mb-3" method="post" action="{{ url_for('tarea_comentar', id=tarea.id) }}">
+          <div class="input-group">
+            <textarea name="contenido" class="form-control" rows="2" placeholder="Escribe un comentario..." required></textarea>
+            <button class="btn btn-primary"><i class="bi bi-send"></i></button>
+          </div>
+        </form>
+
+        {% if comentarios %}
+          <ul class="list-group list-group-flush">
+            {% for c in comentarios %}
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <strong>{{ c.autor or 'Anónimo' }}</strong>
+                    <div class="text-muted small">{{ c.fecha }}</div>
+                  </div>
+                </div>
+                <div class="mt-2" style="white-space: pre-wrap;">{{ c.contenido }}</div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-muted">Aún no hay comentarios.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Adjuntos -->
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-header bg-white"><strong>📎 Adjuntos ({{ adjuntos|length }})</strong></div>
+      <div class="card-body">
+        <form class="mb-3" method="post" enctype="multipart/form-data"
+              action="{{ url_for('tarea_adjuntar', id=tarea.id) }}">
+          <div class="input-group">
+            <input type="file" name="archivo" class="form-control" required>
+            <button class="btn btn-outline-primary"><i class="bi bi-upload"></i> Subir</button>
+          </div>
+          <div class="form-text">Extensiones permitidas: png, jpg, jpeg, pdf, doc, docx, xls, xlsx, txt (máx. 10 MB)</div>
+        </form>
+
+        {% if adjuntos %}
+          <div class="list-group">
+            {% for a in adjuntos %}
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                 href="{{ url_for('adjunto_descargar', aid=a.id) }}">
+                <span><i class="bi bi-paperclip"></i> {{ a.nombre_archivo }}</span>
+                <small class="text-muted">{{ a.fecha }}</small>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted">Sin archivos adjuntos.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="col-12 col-lg-4">
+    <!-- Editar / Reasignar -->
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-header bg-white"><strong>✏️ Editar tarea</strong></div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('tarea_editar', id=tarea.id) }}" class="row g-2">
+          <div class="col-12">
+            <label class="form-label">Título</label>
+            <input name="titulo" class="form-control" value="{{ tarea.titulo }}" required maxlength="255">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="3" maxlength="2000">{{ tarea.descripcion or '' }}</textarea>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Estado</label>
+            <select name="estado" class="form-select">
+              {% for e in ['pendiente','en_progreso','completada'] %}
+                <option value="{{ e }}" {{ 'selected' if tarea.estado==e }}>{{ e|replace('_',' ')|capitalize }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Prioridad</label>
+            <select name="prioridad" class="form-select">
+              {% for p in ['baja','media','alta','critica'] %}
+                <option value="{{ p }}" {{ 'selected' if tarea.prioridad==p }}>{{ p|capitalize }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Vencimiento</label>
+            <input type="date" name="fecha_vencimiento" value="{{ tarea.fecha_vencimiento_input or '' }}" class="form-control">
+          </div>
+          <div class="col-6">
+            <label class="form-label">Asignar a</label>
+            <select name="asignada_a" class="form-select">
+              <option value="">—</option>
+              {% for u in usuarios %}
+                <option value="{{ u.id }}" {{ 'selected' if tarea.asignada_a==u.id }}>{{ u.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-12 d-grid">
+            <button class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-header bg-white"><strong>🏷️ Etiquetas</strong></div>
+      <div class="card-body">
+        <div class="mb-2">
+          {% if tags %}
+            {% for tag in tags %}
+              <a class="badge rounded-pill text-bg-light border me-1 mb-1 text-decoration-none"
+                 href="{{ url_for('tarea_quitar_tag', id=tarea.id, tag_id=tag.id) }}"
+                 onclick="return confirm('Quitar etiqueta {{ tag.nombre }}?');">
+                {{ tag.nombre }} <i class="bi bi-x"></i>
+              </a>
+            {% endfor %}
+          {% else %}
+            <span class="text-muted">Sin etiquetas.</span>
+          {% endif %}
+        </div>
+
+        <form class="input-group" method="post" action="{{ url_for('tarea_agregar_tag', id=tarea.id) }}">
+          <input name="tag" class="form-control" placeholder="Nueva etiqueta…">
+          <button class="btn btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
+        </form>
+
+        {% if all_tags %}
+          <div class="small text-muted mt-2">
+            Sugerencias:
+            {% for at in all_tags[:8] %}
+              <span class="badge text-bg-light border me-1">{{ at.nombre }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Metadatos -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white"><strong>ℹ️ Detalles</strong></div>
+      <div class="card-body small text-muted">
+        <div><i class="bi bi-person-circle"></i> Creada por: {{ tarea.creada_por_nombre or '—' }}</div>
+        <div><i class="bi bi-person"></i> Asignada a: {{ tarea.asignada_a_nombre or '—' }}</div>
+        <div><i class="bi bi-clock-history"></i> Creación: {{ tarea.fecha_creacion }}</div>
+        {% if tarea.fecha_vencimiento %}
+          <div><i class="bi bi-calendar-event"></i> Vence: {{ tarea.fecha_vencimiento }}</div>
+        {% endif %}
+        <div><i class="bi bi-hash"></i> ID: {{ tarea.id }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

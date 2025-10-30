@@ -1,0 +1,135 @@
+{# templates/login.html #}
+{% extends "base.html" %}
+{% block title %}Ingresar - Tareas PRO{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper container">
+  <div class="card auth-card border-0 shadow-soft fade-in overflow-hidden">
+    <div class="row g-0">
+      <!-- Columna visual / branding -->
+      <div class="d-none d-md-block col-md-5 position-relative" style="background:
+          radial-gradient(1200px 600px at -10% -10%, rgba(91,124,250,.25), transparent 60%),
+          radial-gradient(900px 500px at 120% 120%, rgba(45,212,191,.18), transparent 55%),
+          linear-gradient(120deg, #0ea5e9 0%, #5b7cfa 45%, #7b9bff 100%);
+        ">
+        <div class="h-100 w-100 p-4 d-flex flex-column justify-content-between text-white">
+          <div>
+            <div class="auth-header">
+              <div class="brand shadow-sm" style="background: rgba(255,255,255,.15);">
+                <i class="bi bi-check2-circle"></i>
+              </div>
+              <h2 class="fw-bold mb-1">Tareas PRO</h2>
+              <p class="mb-0 text-white-50">Organiza. Prioriza. Ejecuta.</p>
+            </div>
+          </div>
+
+          <div class="mt-auto">
+            <ul class="list-unstyled small mb-3">
+              <li class="mb-2"><i class="bi bi-stars me-2"></i>Dashboard con métricas en tiempo real</li>
+              <li class="mb-2"><i class="bi bi-people me-2"></i>Asignación por usuario y comentarios</li>
+              <li class="mb-2"><i class="bi bi-tags me-2"></i>Etiquetas, prioridades y adjuntos</li>
+            </ul>
+            <div class="d-flex align-items-center gap-2 small text-white-50">
+              <i class="bi bi-shield-lock"></i>
+              <span>Cifrado de contraseñas y auditoría de acciones</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna del formulario -->
+      <div class="col-12 col-md-7">
+        <div class="p-4 p-lg-5">
+          <div class="mb-3 d-md-none text-center">
+            <div class="auth-header">
+              <div class="brand"><i class="bi bi-check2-circle"></i></div>
+              <h2 class="fw-bold mb-1">Tareas PRO</h2>
+              <p class="text-muted-2 mb-0">Ingresa a tu cuenta</p>
+            </div>
+          </div>
+
+          <h1 class="h4 fw-bold mb-3">Bienvenido</h1>
+          <p class="text-muted mb-4">Ingresa tus credenciales para continuar.</p>
+
+          <form method="post" novalidate>
+            {# Si tu app pasa ?next=/ruta, lo preservamos #}
+            {% if request.args.get('next') %}
+              <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+            {% endif %}
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input name="email" type="email" class="form-control" placeholder="tucorreo@empresa.com" required autofocus>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Contraseña</label>
+                <a class="small" href="#" onclick="alert('Función de recuperación pendiente'); return false;">¿Olvidaste tu contraseña?</a>
+              </div>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input id="password" name="password" type="password" class="form-control" placeholder="••••••••" required>
+                <button type="button" class="btn btn-outline-secondary" id="togglePwd" aria-label="Mostrar/Ocultar contraseña">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="1" id="remember">
+                <label class="form-check-label" for="remember">Recordarme</label>
+              </div>
+              <span class="small text-muted-2">Admin demo: <code>admin@example.com</code> / <code>admin123</code></span>
+            </div>
+
+            <button class="btn btn-primary w-100 py-2 mb-3">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+            </button>
+
+            <div class="text-center text-muted mb-3">o</div>
+
+            <!-- Accesos sociales (placeholders) -->
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-outline-primary">
+                <i class="bi bi-google me-2"></i>Continuar con Google
+              </button>
+              <button type="button" class="btn btn-outline-secondary">
+                <i class="bi bi-github me-2"></i>Continuar con GitHub
+              </button>
+            </div>
+
+            <div class="text-center mt-4">
+              <span class="text-muted">¿No tienes cuenta?</span>
+              <a href="{{ url_for('register') }}" class="ms-1">Crear cuenta</a>
+            </div>
+          </form>
+
+          <div class="footer small text-center text-muted-2 mt-4">
+            © {{ now.year }} Tareas PRO · Seguridad · Privacidad · Ayuda
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Toggle de contraseña #}
+<script>
+  (function(){
+    const btn = document.getElementById('togglePwd');
+    const input = document.getElementById('password');
+    if(btn && input){
+      btn.addEventListener('click', function(){
+        const isPwd = input.getAttribute('type') === 'password';
+        input.setAttribute('type', isPwd ? 'text' : 'password');
+        this.innerHTML = isPwd ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+      });
+    }
+  })();
+</script>
+{% endblock %}

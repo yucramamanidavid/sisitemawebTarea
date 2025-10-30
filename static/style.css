@@ -474,4 +474,7 @@ header p {
     .btn {
         width: 100%;
     }
+    /* Ajustes sutiles */
+.list-group-item:hover { background: #fafafa; }
+
 }

@@ -1,0 +1,84 @@
+{# templates/_task_card.html #}
+<div class="card h-100 shadow-sm border-0">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start">
+      <div class="me-2">
+        <h5 class="card-title mb-1">
+          <a class="text-decoration-none" href="{{ url_for('tarea_detalle', id=t.id) }}">{{ t.titulo }}</a>
+        </h5>
+        <span class="badge rounded-pill
+          {% if t.estado == 'completada' %}text-bg-success
+          {% elif t.estado == 'en_progreso' %}text-bg-info
+          {% else %}text-bg-secondary{% endif %}">
+          {% if t.estado == 'completada' %}Completada
+          {% elif t.estado == 'en_progreso' %}En progreso
+          {% else %}Pendiente{% endif %}
+        </span>
+      </div>
+
+      <div class="text-nowrap">
+        <span class="badge
+          {% if t.prioridad == 'critica' %}text-bg-danger
+          {% elif t.prioridad == 'alta' %}text-bg-warning
+          {% elif t.prioridad == 'media' %}text-bg-secondary
+          {% else %}text-bg-light text-dark{% endif %}">
+          {{ t.prioridad|capitalize }}
+        </span>
+      </div>
+    </div>
+
+    {% if t.descripcion %}
+      <p class="card-text small text-muted mt-2">
+        {{ t.descripcion[:160] }}{% if t.descripcion|length > 160 %}…{% endif %}
+      </p>
+    {% endif %}
+
+    <div class="small text-muted">
+      <div class="mb-1"><i class="bi bi-calendar-event me-1"></i> Creada: {{ t.fecha_creacion }}</div>
+      {% if t.fecha_vencimiento %}
+        <div class="mb-1"><i class="bi bi-alarm me-1"></i> Vence: {{ t.fecha_vencimiento }}</div>
+      {% endif %}
+      {% if t.asignada_a_nombre %}
+        <div class="mb-1"><i class="bi bi-person-circle me-1"></i> Asignada a: {{ t.asignada_a_nombre }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card-footer bg-body d-flex gap-2 justify-content-between">
+    <div class="btn-group">
+      <a class="btn btn-sm btn-outline-primary" href="{{ url_for('tarea_detalle', id=t.id) }}">
+        <i class="bi bi-pencil-square"></i> Abrir
+      </a>
+      {% if t.estado != 'completada' %}
+        <a class="btn btn-sm btn-success" href="{{ url_for('tarea_cambiar_estado', id=t.id, estado='completada') }}">
+          <i class="bi bi-check2"></i> Completar
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="dropstart">
+      <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="{{ url_for('tarea_detalle', id=t.id) }}"><i class="bi bi-pencil-square me-2"></i>Editar</a></li>
+        {% if t.estado != 'pendiente' %}
+          <li><a class="dropdown-item" href="{{ url_for('tarea_cambiar_estado', id=t.id, estado='pendiente') }}"><i class="bi bi-hourglass-split me-2"></i>Marcar pendiente</a></li>
+        {% endif %}
+        {% if t.estado != 'en_progreso' %}
+          <li><a class="dropdown-item" href="{{ url_for('tarea_cambiar_estado', id=t.id, estado='en_progreso') }}"><i class="bi bi-rocket-takeoff me-2"></i>Marcar en progreso</a></li>
+        {% endif %}
+        {% if t.estado != 'completada' %}
+          <li><a class="dropdown-item" href="{{ url_for('tarea_cambiar_estado', id=t.id, estado='completada') }}"><i class="bi bi-check2-circle me-2"></i>Marcar completada</a></li>
+        {% endif %}
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <a class="dropdown-item text-danger" href="{{ url_for('tarea_eliminar', id=t.id) }}"
+             onclick="return confirm('¿Eliminar esta tarea? Esta acción no se puede deshacer.');">
+            <i class="bi bi-trash3 me-2"></i>Eliminar
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+{# Partial de tarjeta de tarea. Requiere variable "t". #}
+{% set cls_state = 'is-' ~ (t.estado or 'pendiente') %}
+{% set cls_prio = 'is-' ~ (t.prioridad or 'media') %}
+
+<div class="card task-card {{ cls_state }} {{ 'is-critica' if t.prioridad=='critica' else '' }} border-0 shadow-soft h-100">
+  <div class="card-body d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-start mb-1">
+      <h5 class="card-title mb-1 line-clamp-2">
+        <a href="{{ url_for('tarea_detalle', id=t.id) }}" class="stretched-link">{{ t.titulo }}</a>
+      </h5>
+      <div class="ms-2">
+        {% if t.estado == 'pendiente' %}
+          <span class="badge bg-warning-subtle text-dark">Pendiente</span>
+        {% elif t.estado == 'en_progreso' %}
+          <span class="badge bg-info">En progreso</span>
+        {% elif t.estado == 'completada' %}
+          <span class="badge bg-success">Completada</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if t.descripcion %}
+      <p class="card-text line-clamp-3 mb-2">{{ t.descripcion }}</p>
+    {% else %}
+      <p class="card-text text-muted-2 mb-2"><em>Sin descripción</em></p>
+    {% endif %}
+
+    <div class="meta small mb-3">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-flag"></i>
+        <span>Prioridad:
+          {% if t.prioridad == 'critica' %}
+            <span class="badge bg-danger">Crítica</span>
+          {% elif t.prioridad == 'alta' %}
+            <span class="badge bg-warning text-dark">Alta</span>
+          {% elif t.prioridad == 'media' %}
+            <span class="badge bg-primary-subtle text-dark">Media</span>
+          {% else %}
+            <span class="badge text-bg-light border">Baja</span>
+          {% endif %}
+        </span>
+      </div>
+      {% if t.asignada_a_nombre %}
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-person-circle"></i>
+        <span>Asignada a: <strong>{{ t.asignada_a_nombre }}</strong></span>
+      </div>
+      {% endif %}
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-calendar-event"></i>
+        <span>Creada: {{ t.fecha_creacion }}</span>
+      </div>
+      {% if t.fecha_vencimiento %}
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-alarm"></i>
+        <span>Vence: <strong>{{ t.fecha_vencimiento }}</strong></span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="mt-auto d-flex flex-wrap gap-2 actions">
+      {% if t.estado != 'pendiente' %}
+        <a href="{{ url_for('tarea_cambiar_estado', id=t.id, estado='pendiente') }}" class="btn btn-outline-secondary btn-chip">
+          ⏳ Pendiente
+        </a>
+      {% endif %}
+      {% if t.estado != 'en_progreso' %}
+        <a href="{{ url_for('tarea_cambiar_estado', id=t.id, estado='en_progreso') }}" class="btn btn-info btn-chip">
+          🚀 En progreso
+        </a>
+      {% endif %}
+      {% if t.estado != 'completada' %}
+        <a href="{{ url_for('tarea_cambiar_estado', id=t.id, estado='completada') }}" class="btn btn-success btn-chip">
+          ✅ Completar
+        </a>
+      {% endif %}
+      <a href="{{ url_for('tarea_eliminar', id=t.id) }}" class="btn btn-danger btn-chip ms-auto"
+         onclick="return confirm('¿Eliminar tarea \"{{ t.titulo }}\"?');">
+        🗑️ Eliminar
+      </a>
+    </div>
+  </div>
+</div>
