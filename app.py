@@ -2,6 +2,8 @@
 import os, io, csv, json, logging, threading, re, secrets
 from datetime import datetime, date
 from typing import Optional
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv(), override=True)
 
 from flask import (
     Flask, render_template, request, redirect, url_for, flash,

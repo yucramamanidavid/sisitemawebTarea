@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Venv
+venv/
+.env
+.env.*
+*.env
+
+# Git/IDE
+.git
+.gitignore
+.idea/
+.vscode/
+
+# Archivos locales
+uploads/
+*.log
+*.DS_Store
+
+# Docker build cache
+wheels/
